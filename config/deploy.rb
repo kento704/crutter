@@ -1,4 +1,4 @@
-set :application, crutter
+set :application, :crutter
 set :repo_url, 'git@github.com:Iwark/crutter.git'
 
 set :scm, :git
