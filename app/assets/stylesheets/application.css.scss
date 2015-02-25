@@ -1,7 +1,7 @@
 
 // First import cerulean variables
 @import "bootswatch/yeti/variables";
-@import "bootstrap-custom.scss";
+@import "bootstrap";
 
 *{
   // borderとpaddingをボックス内に含めるようにする
@@ -31,6 +31,11 @@ html, body{
 body{
   padding: 0 20px;
   padding-top: 60px;
+}
+
+.tab-pane{
+  border: 1px solid #ddd;
+  padding: 10px;
 }
 
 @import "bootswatch/yeti/bootswatch";

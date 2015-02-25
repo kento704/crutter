@@ -10,7 +10,9 @@
 #  friends_count      :integer          default("0")
 #  followers_count    :integer          default("0")
 #  description        :string(255)      default("")
-#  usage              :text(65535)
+#  auto_update        :boolean          default("1")
+#  auto_follow        :boolean          default("1")
+#  auto_unfollow      :boolean          default("1")
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
 #
