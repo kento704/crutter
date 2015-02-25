@@ -1,12 +1,21 @@
-ul.nav.nav-tabs
-  li.active
-    a href="#tab1" data-toggle="tab" タブ1
-  li
-    a href="#tab2" data-toggle="tab" タブ2
+ul.nav.nav-tabs.sortable
+  - @groups.each_with_index do |group, i|
+    - if i == 0
+      li.active data-group-id=group.id
+        a href="#tab#{group.id}" data-toggle="tab" = group.name
+    - else  
+      li data-group-id=group.id
+        a href="#tab#{group.id}" data-toggle="tab" = group.name
+  li.unsortable data-group-id=0
+    = link_to '+', new_group_path
+
 .tab-content
-  .tab-pane.fade.in.active#tab1
-    p コンテンツ1
-  .tab-pane.fade#tab2
-    p コンテンツ2
+  - @groups.each_with_index do |group, i|
+    - if i == 0
+      .tab-pane.fade.in.active id="tab#{group.id}"
+        p = group.name
+    - else
+      .tab-pane.fade id="tab#{group.id}"
+        p = group.name
 
 = link_to "アカウントの追加", "/auth/twitter"

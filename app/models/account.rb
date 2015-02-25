@@ -19,6 +19,8 @@
 
 class Account < ActiveRecord::Base
 
+  belongs_to :group
+
   # 全てのアカウントのデータを更新する
   #
   # @return [nil]

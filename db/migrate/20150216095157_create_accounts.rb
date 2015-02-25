@@ -1,6 +1,7 @@
 class CreateAccounts < ActiveRecord::Migration
   def change
     create_table :accounts do |t|
+      t.references :group, null: false, index: true
       t.string :screen_name, null: false
       t.string :target_user, default: ""
       t.string :oauth_token, null: false

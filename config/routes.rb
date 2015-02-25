@@ -7,6 +7,10 @@ Rails.application.routes.draw do
 
   get '/auth/twitter/callback' => "omniauth_callbacks#twitter"
 
+  resources :groups do
+    patch :change_order
+  end
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
