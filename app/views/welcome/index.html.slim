@@ -1,4 +1,6 @@
+/ タブリスト
 ul.nav.nav-tabs.sortable
+  / グループごとにタブの作成
   - @groups.each_with_index do |group, i|
     - if i == 0
       li.active data-group-id=group.id
@@ -6,16 +8,27 @@ ul.nav.nav-tabs.sortable
     - else  
       li data-group-id=group.id
         a href="#tab#{group.id}" data-toggle="tab" = group.name
+  / タブの追加ボタン
   li.unsortable data-group-id=0
     = link_to '+', new_group_path
 
 .tab-content
+  / 現在のタブの内容を表示（アカウントリスト）
   - @groups.each_with_index do |group, i|
-    - if i == 0
-      .tab-pane.fade.in.active id="tab#{group.id}"
-        p = group.name
-    - else
-      .tab-pane.fade id="tab#{group.id}"
-        p = group.name
-
-= link_to "アカウントの追加", "/auth/twitter"
+    = tab_pane(i, {id: "tab#{group.id}"}) do 
+      table.table
+        thead
+          tr
+            th ScreenName
+            th Target
+            th Desc
+            th Friends
+            th Followers
+            th Update
+            th Follow
+            th Unfollow
+            th
+        tbody
+          = render group.accounts
+      .mt10
+        = link_to "アカウントの追加", "/auth/twitter?group_id=#{group.id}"

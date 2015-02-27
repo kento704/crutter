@@ -1,12 +1,12 @@
 class GroupsController < ApplicationController
   permits :name, :display_order
 
-  # GET /accounts/new
+  # GET /groups/new
   def new
     @group = Group.new
   end
 
-  # POST /accounts
+  # POST /groups
   def create(group)
     @group = Group.new(group)
 

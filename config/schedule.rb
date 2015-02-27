@@ -18,3 +18,14 @@
 # end
 
 # Learn more: http://github.com/javan/whenever
+
+env :PATH, ENV['PATH']
+
+set :output, {standard: 'log/cron_standard.log', error: 'log/cron_error.log'}
+set :environment, :production
+
+every 15.minutes do
+  rake "account:follow_all"
+  rake "account:unfollow_all"
+  rake "account:update_all_statuses"
+end

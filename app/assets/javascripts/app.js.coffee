@@ -8,11 +8,9 @@ $ ->
       scroll: true,
       tolerance: "pointer",
       update: (event, ui)->
-        console.log "updated!"
         group_id = ui.item.attr("data-group-id")
         for i in [0..$(ui.item).parent().children().length]
           if $(ui.item).parent().children().eq(i).attr("data-group-id") == group_id
-            console.log "new position is #{i}"
             $.ajax(
               type: "PATCH",
               url: "/groups/#{group_id}/change_order",

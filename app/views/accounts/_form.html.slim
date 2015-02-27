@@ -1,0 +1,11 @@
+= simple_form_for(@account) do |f|
+
+  .form-inputs
+    = f.input :target_user
+    = f.input :description
+    = f.input :auto_update
+    = f.input :auto_follow
+    = f.input :auto_unfollow
+
+  .form-actions
+    = f.button :submit, class: 'btn btn-primary'

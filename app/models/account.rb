@@ -26,9 +26,9 @@ class Account < ActiveRecord::Base
   # @return [nil]
   def self.update_all_statuses
 
-    accounts     = Account.where(auto_update: true).select(:screen_name)
+    accounts     = Account.where(auto_update: true).select(:id, :screen_name)
     screen_names = accounts.pluck(:screen_name)
-    users        = get_users(screen_names)
+    users        = Account.first.get_users(screen_names)
 
     followers_sum = 0
     accounts.where(screen_name: users.map(&:screen_name)).each do |a|
@@ -62,11 +62,22 @@ class Account < ActiveRecord::Base
     end
   end
 
-  private
+  # 複数のユーザーの取得
+  #
+  # @param [Array<String>] targets ターゲットアカウントのscreen_name
+  # @return [Array<Twitter::User>] users Twitterユーザーリスト情報.
+  def get_users(targets)
+    begin
+      users = client.users(targets)
+    rescue => e
+      error_log(e)
+    end
+    users
+  end
 
   # ユーザーのフォロー
   #
-  # @param [Fixnum] n フォローする数
+  # @param [Fixnum] n フォローを試みる回数
   # @return [nil]
   def follow_users(n=15)
 
@@ -79,9 +90,10 @@ class Account < ActiveRecord::Base
     oneside_ids = target_follower_ids - account_friend_ids
 
     followed = []
-    oneside_ids.each do |target|
+    oneside_ids.each_with_index do |target, i|
+      break if i+1 > n
       if user = follow_user(target)
-        followed << user.screen_name
+        followed << user[0].screen_name if user.length > 0
       end
     end
 
@@ -93,7 +105,7 @@ class Account < ActiveRecord::Base
   #
   # @param [Fixnum] n フォロー解除する数
   # @return [nil]
-  def follow_users(n=15)
+  def unfollow_users(n=15)
 
     friend_ids = get_friend_ids
     return unless friend_ids
@@ -105,14 +117,17 @@ class Account < ActiveRecord::Base
     oneside_ids = (friend_ids - follower_ids).reverse
 
     unfollowed = []
-    oneside_ids.each do |target|
+    oneside_ids.each_with_index do |target, i|
+      break if i+1 > n
       if user = unfollow_user(target)
-        unfollowed << user.screen_name
+        unfollowed << user[0].screen_name if user.length > 0
       end
     end
 
     info_log unfollowed
   end
+
+  # private
 
   #################
   #
@@ -128,8 +143,8 @@ class Account < ActiveRecord::Base
       Twitter::REST::Client.new(
         consumer_key:       Rails.application.secrets.twitter_consumer_key,
         consumer_secret:    Rails.application.secrets.twitter_consumer_secret,
-        oauth_token:        self.oauth_token,
-        oauth_token_secret: self.oauth_token_secret
+        access_token:        self.oauth_token,
+        access_token_secret: self.oauth_token_secret
       )
   end
 
@@ -144,19 +159,6 @@ class Account < ActiveRecord::Base
       error_log(e)
     end
     user
-  end
-
-  # 複数のユーザーの取得
-  #
-  # @param [Array<String>] targets ターゲットアカウントのscreen_name
-  # @return [Array<Twitter::User>] users Twitterユーザーリスト情報.
-  def get_users(targets)
-    begin
-      users = client.users(targets)
-    rescue => e
-      error_log(e)
-    end
-    users
   end
 
   # ユーザーのフォロー
