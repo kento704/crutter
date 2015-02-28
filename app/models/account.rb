@@ -40,11 +40,11 @@ class Account < ActiveRecord::Base
       a.update(
         friends_count:   user.friends_count,
         followers_count: user.followers_count
-      )
+        )
       FollowerHistory.create(
         account_id: a.id,
         followers_count: user.followers_count
-      )
+        )
 
       followers_sum += user.followers_count
     end
@@ -154,28 +154,33 @@ class Account < ActiveRecord::Base
 
     direct_messages = self.group.message_pattern.direct_messages.order(:step)
 
-    follower_ids.each_with_index do |follower_id, i|
-      if sent_message = self.sent_messages.find_by(to_user_id: follower_id)
-        # すでに最終ステップまで行っていたら次へ
-        next if sent_message.direct_message.step == direct_messages.last.step
-        if recieved_messages = get_direct_messages
-          recieved_messages.each do |mes|
-            # 返事が来ていれば、次のステップのメッセージを送信する
-            if mes.to_h[:sender_id] == follower_id && sent_message.created_at < mes.to_h[:created_at].to_datetime
-              message = direct_messages.where(DirectMessage.arel_table[:step].gt(sent_message.direct_message.step)).first
+    sent_num = 0
+
+    # 返信
+    if recieved_messages = get_direct_messages
+      recieved_messages.each do |mes|
+        # 返事が来ていれば、次のステップのメッセージを送信する
+        if sent_message = self.sent_messages.find_by(to_user_id: mes.to_h[:sender_id])
+          if sent_message.created_at < mes.to_h[:created_at].to_datetime
+            message = direct_messages.where(DirectMessage.arel_table[:step].gt(sent_message.direct_message.step)).first
+            if message && send_direct_message(sent_message.to_user_id, message.text)
+              sent_message.update(direct_message_id: message.id)
+              sent_num += 1
+              return if sent_num+1 > n
             end
           end
         end
-        next unless defined?(message)
-        break if i+1 > n
-        if send_direct_message(follower_id, message.text)
-          sent_message.update(direct_message_id: message.id)
-        end
-      else
-        break if i+1 > n
+      end
+    end
+
+    # 新規送信
+    follower_ids.each do |follower_id|
+      unless self.sent_messages.find_by(to_user_id: follower_id)
         message = direct_messages.first
         if send_direct_message(follower_id, message.text)
           sent_messages.create(to_user_id: follower_id, direct_message_id: message.id)
+          sent_num += 1
+          return if sent_num+1 > n
         end
       end
     end
@@ -194,11 +199,11 @@ class Account < ActiveRecord::Base
   # @return [Twitter::REST::Client] client Twitterクライアント
   def client
     @client ||=
-      Twitter::REST::Client.new(
-        consumer_key:       Rails.application.secrets.twitter_consumer_key,
-        consumer_secret:    Rails.application.secrets.twitter_consumer_secret,
-        access_token:        self.oauth_token,
-        access_token_secret: self.oauth_token_secret
+    Twitter::REST::Client.new(
+      consumer_key:       Rails.application.secrets.twitter_consumer_key,
+      consumer_secret:    Rails.application.secrets.twitter_consumer_secret,
+      access_token:        self.oauth_token,
+      access_token_secret: self.oauth_token_secret
       )
   end
 
@@ -286,7 +291,7 @@ class Account < ActiveRecord::Base
   #
   # @param [Fixnum] n 取得する数
   # @return [Array<Twitter::DirectMessage>] messages DM
-  def get_direct_messages(n=50)
+  def get_direct_messages(n=10)
     begin
       messages = client.direct_messages(count: n)
     rescue => e
