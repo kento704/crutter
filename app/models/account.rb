@@ -166,7 +166,7 @@ class Account < ActiveRecord::Base
             end
           end
         end
-        next unless message
+        next unless defined?(message)
         break if i+1 > n
         if send_direct_message(follower_id, message.text)
           sent_message.update(direct_message_id: message.id)
