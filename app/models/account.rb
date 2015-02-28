@@ -3,6 +3,7 @@
 # Table name: accounts
 #
 #  id                 :integer          not null, primary key
+#  group_id           :integer          not null
 #  screen_name        :string(255)      not null
 #  target_user        :string(255)      default("")
 #  oauth_token        :string(255)      not null
@@ -20,6 +21,7 @@
 class Account < ActiveRecord::Base
 
   belongs_to :group
+  has_many :follower_histories
 
   # 全てのアカウントのデータを更新する
   #
@@ -34,13 +36,16 @@ class Account < ActiveRecord::Base
     accounts.where(screen_name: users.map(&:screen_name)).each do |a|
       user = users.find &-> u { u.screen_name == a.screen_name }
       a.update(
-        friends_count:   user.friends_count, 
+        friends_count:   user.friends_count,
         followers_count: user.followers_count
       )
+      FollowerHistory.create(
+        account_id: a.id,
+        followers_count: user.followers_count
+      )
+
       followers_sum += user.followers_count
     end
-
-    PowerHistory.create(followers_sum: followers_sum)
 
   end
 

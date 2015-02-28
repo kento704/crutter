@@ -15,7 +15,7 @@ ul.nav.nav-tabs.sortable
 .tab-content
   / 現在のタブの内容を表示（アカウントリスト）
   - @groups.each_with_index do |group, i|
-    = tab_pane(i, {id: "tab#{group.id}"}) do 
+    = tab_pane(i, {id: "tab#{group.id}"}) do
       table.table
         thead
           tr
@@ -27,6 +27,7 @@ ul.nav.nav-tabs.sortable
             th Update
             th Follow
             th Unfollow
+            th
             th
         tbody
           = render group.accounts

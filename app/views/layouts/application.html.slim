@@ -5,8 +5,17 @@ html
       | Crutter
     = stylesheet_link_tag    'application', media: 'all'
     = javascript_include_tag 'application'
+    = javascript_include_tag "//www.google.com/jsapi", "chartkick"
     = csrf_meta_tags
   body
-    .header
-      = link_to image_tag('logo.png'), :root
-    = yield
+    nav.navbar.navbar-default.navbar-fixed-top.header
+      .container
+        .navbar-header
+          = link_to image_tag('logo.png'), :root, class: "navbar-brand"
+        .nav.navbar-nav
+          =nav_list(controller.controller_name, "welcome") do
+            = link_to 'TopPage', root_path
+          =nav_list(controller.controller_name, "follower_histories") do
+            = link_to 'FollowerHistory', follower_histories_path
+    .main-container
+      = yield

@@ -3,6 +3,7 @@
 # Table name: accounts
 #
 #  id                 :integer          not null, primary key
+#  group_id           :integer          not null
 #  screen_name        :string(255)      not null
 #  target_user        :string(255)      default("")
 #  oauth_token        :string(255)      not null

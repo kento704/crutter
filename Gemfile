@@ -49,6 +49,7 @@ gem 'active_decorator'
 
 gem 'omniauth-twitter'
 gem 'twitter'
+gem 'chartkick'
 
 group :development do
   gem 'html2slim'

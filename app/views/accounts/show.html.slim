@@ -1,0 +1,9 @@
+h2 = @account.linked_screen_name
+h3 = @account.description
+
+= link_to 'Edit', edit_account_path(@account)
+'|
+= link_to 'Back', :root
+
+.followers_count.chart
+  = line_chart @followers_count_data, library: {html:'<div id="%{id}" style="width: 100%; height: 300px;">Loading...</div>'}

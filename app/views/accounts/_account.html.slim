@@ -1,6 +1,6 @@
 - cache(account) do
   tr.account data-account-id=account.id
-    td.screen_name     = account.screen_name
+    td.screen_name     = account.linked_screen_name
     td.target_user     = account.target_user
     td.description     = account.description
     td.friends_count   = account.friends_count
@@ -8,4 +8,5 @@
     td.auto_update     = account.auto_update   ? "ON" : "OFF"
     td.auto_follow     = account.auto_follow   ? "ON" : "OFF"
     td.auto_unfollow   = account.auto_unfollow ? "ON" : "OFF"
-    td.edit_account    = link_to 'Edit', edit_account_path(account), class:'btn btn-info'
+    td.show_account    = link_to 'Show', account_path(account), class: 'btn btn-info'
+    td.edit_account    = link_to 'Edit', edit_account_path(account), class:'btn btn-warning'

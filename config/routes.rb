@@ -7,7 +7,8 @@ Rails.application.routes.draw do
 
   get '/auth/twitter/callback' => "omniauth_callbacks#twitter"
 
-  resources :accounts, only: [:edit, :update]
+  resources :accounts, only: [:show, :edit, :update]
+  resources :follower_histories, only: [:index]
 
   resources :groups do
     patch :change_order
