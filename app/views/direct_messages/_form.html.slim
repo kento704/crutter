@@ -1,0 +1,9 @@
+= simple_form_for(@direct_message) do |f|
+
+  .form-inputs
+    = f.hidden_field :message_pattern_id
+    = f.input :step
+    = f.input :text
+
+  .form-actions
+    = f.button :submit, class: 'btn btn-primary'

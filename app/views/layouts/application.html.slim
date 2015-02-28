@@ -13,9 +13,11 @@ html
         .navbar-header
           = link_to image_tag('logo.png'), :root, class: "navbar-brand"
         .nav.navbar-nav
-          =nav_list(controller.controller_name, "welcome") do
+          = nav_list(controller.controller_name, "welcome") do
             = link_to 'TopPage', root_path
-          =nav_list(controller.controller_name, "follower_histories") do
+          = nav_list(controller.controller_name, "follower_histories") do
             = link_to 'FollowerHistory', follower_histories_path
+          = nav_list(controller.controller_name, "direct_messages") do
+            = link_to 'DirectMessages', direct_messages_path
     .main-container
       = yield

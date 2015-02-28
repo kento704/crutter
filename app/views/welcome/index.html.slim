@@ -5,7 +5,7 @@ ul.nav.nav-tabs.sortable
     - if i == 0
       li.active data-group-id=group.id
         a href="#tab#{group.id}" data-toggle="tab" = group.name
-    - else  
+    - else
       li data-group-id=group.id
         a href="#tab#{group.id}" data-toggle="tab" = group.name
   / タブの追加ボタン
@@ -16,6 +16,7 @@ ul.nav.nav-tabs.sortable
   / 現在のタブの内容を表示（アカウントリスト）
   - @groups.each_with_index do |group, i|
     = tab_pane(i, {id: "tab#{group.id}"}) do
+      = link_to 'グループの編集', edit_group_path(group)
       table.table
         thead
           tr
@@ -27,6 +28,7 @@ ul.nav.nav-tabs.sortable
             th Update
             th Follow
             th Unfollow
+            th DM
             th
             th
         tbody

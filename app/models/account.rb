@@ -2,26 +2,28 @@
 #
 # Table name: accounts
 #
-#  id                 :integer          not null, primary key
-#  group_id           :integer          not null
-#  screen_name        :string(255)      not null
-#  target_user        :string(255)      default("")
-#  oauth_token        :string(255)      not null
-#  oauth_token_secret :string(255)      not null
-#  friends_count      :integer          default("0")
-#  followers_count    :integer          default("0")
-#  description        :string(255)      default("")
-#  auto_update        :boolean          default("1")
-#  auto_follow        :boolean          default("1")
-#  auto_unfollow      :boolean          default("1")
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
+#  id                  :integer          not null, primary key
+#  group_id            :integer          not null
+#  screen_name         :string(255)      not null
+#  target_user         :string(255)      default("")
+#  oauth_token         :string(255)      not null
+#  oauth_token_secret  :string(255)      not null
+#  friends_count       :integer          default("0")
+#  followers_count     :integer          default("0")
+#  description         :string(255)      default("")
+#  auto_update         :boolean          default("1")
+#  auto_follow         :boolean          default("1")
+#  auto_unfollow       :boolean          default("1")
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  auto_direct_message :boolean          default("1")
 #
 
 class Account < ActiveRecord::Base
 
   belongs_to :group
   has_many :follower_histories
+  has_many :sent_messages
 
   # 全てのアカウントのデータを更新する
   #
@@ -64,6 +66,15 @@ class Account < ActiveRecord::Base
   def self.unfollow_all
     Account.where(auto_unfollow: true).each do |a|
       a.unfollow_users
+    end
+  end
+
+  # 全てのアカウントについてDMの送信作業を行う
+  #
+  # @return [nil]
+  def self.send_direct_messages_all
+    Account.where(auto_direct_message: true).each do |a|
+      a.send_direct_messages
     end
   end
 
@@ -130,6 +141,44 @@ class Account < ActiveRecord::Base
     end
 
     info_log unfollowed
+  end
+
+  # DMの送信
+  #
+  # @param [Fixnum] n 一度にDMを送信する数
+  # @return [nil]
+  def send_direct_messages(n=5)
+
+    follower_ids = get_follower_ids
+    return unless follower_ids
+
+    direct_messages = self.group.message_pattern.direct_messages.order(:step)
+
+    follower_ids.each_with_index do |follower_id, i|
+      if sent_message = self.sent_messages.find_by(to_user_id: follower_id)
+        # すでに最終ステップまで行っていたら次へ
+        next if sent_message.direct_message.step == direct_messages.last.step
+        if recieved_messages = get_direct_messages
+          recieved_messages.each do |mes|
+            # 返事が来ていれば、次のステップのメッセージを送信する
+            if mes.to_h[:sender_id] == follower_id && sent_message.created_at < mes.to_h[:created_at].to_datetime
+              message = direct_messages.where(DirectMessage.arel_table[:step].gt(sent_message.direct_message.step)).first
+            end
+          end
+        end
+        next unless message
+        break if i+1 > n
+        if send_direct_message(follower_id, message.text)
+          sent_message.update(direct_message_id: message.id)
+        end
+      else
+        break if i+1 > n
+        message = direct_messages.first
+        if send_direct_message(follower_id, message.text)
+          sent_messages.create(to_user_id: follower_id, direct_message_id: message.id)
+        end
+      end
+    end
   end
 
   # private
@@ -231,6 +280,33 @@ class Account < ActiveRecord::Base
       error_log(e)
     end
     follower_ids
+  end
+
+  # DMの取得
+  #
+  # @param [Fixnum] n 取得する数
+  # @return [Array<Twitter::DirectMessage>] messages DM
+  def get_direct_messages(n=50)
+    begin
+      messages = client.direct_messages(count: n)
+    rescue => e
+      error_log(e)
+    end
+    messages
+  end
+
+  # DMの送信
+  #
+  # @param [Fixnum] target ターゲットアカウントのID
+  # @param [String] text 送る内容
+  # @return [Twitter::DirectMessage] message 送ったDM
+  def send_direct_message(target, text)
+    begin
+      message = client.create_direct_message(target, text)
+    rescue => e
+      error_log(e)
+    end
+    message
   end
 
   #################

@@ -1,0 +1,5 @@
+- cache(direct_message) do
+  tr.direct_message data-direct-message-id=direct_message.id
+    td.step                = direct_message.step
+    td.text                = direct_message.text
+    td.edit_direct_message = link_to 'Edit', edit_direct_message_path(direct_message), class:'btn btn-warning'

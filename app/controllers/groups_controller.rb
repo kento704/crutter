@@ -1,9 +1,14 @@
 class GroupsController < ApplicationController
-  permits :name, :display_order
+  permits :name, :display_order, :message_pattern_id
 
   # GET /groups/new
   def new
     @group = Group.new
+  end
+
+  # GET /groups/:id/edit
+  def edit(id)
+    @group = Group.find(id)
   end
 
   # POST /groups
@@ -14,6 +19,15 @@ class GroupsController < ApplicationController
       redirect_to :root, notice: 'Group was successfully created.'
     else
       render :new
+    end
+  end
+
+  def update(id, group)
+    @group = Group.find(id)
+    if @group.update(group)
+      redirect_to :root
+    else
+      render :edit
     end
   end
 

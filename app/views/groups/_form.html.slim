@@ -2,6 +2,7 @@
 
   .form-inputs
     = f.input :name
+    = f.input :message_pattern_id, collection: MessagePattern.all
 
   .form-actions
     = f.button :submit, class: 'btn btn-primary'

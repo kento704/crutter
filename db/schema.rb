@@ -11,26 +11,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150228025408) do
+ActiveRecord::Schema.define(version: 20150228055932) do
 
   create_table "accounts", force: :cascade do |t|
-    t.integer  "group_id",           limit: 4,                  null: false
-    t.string   "screen_name",        limit: 255,                null: false
-    t.string   "target_user",        limit: 255, default: ""
-    t.string   "oauth_token",        limit: 255,                null: false
-    t.string   "oauth_token_secret", limit: 255,                null: false
-    t.integer  "friends_count",      limit: 4,   default: 0
-    t.integer  "followers_count",    limit: 4,   default: 0
-    t.string   "description",        limit: 255, default: ""
-    t.boolean  "auto_update",        limit: 1,   default: true
-    t.boolean  "auto_follow",        limit: 1,   default: true
-    t.boolean  "auto_unfollow",      limit: 1,   default: true
-    t.datetime "created_at",                                    null: false
-    t.datetime "updated_at",                                    null: false
+    t.integer  "group_id",            limit: 4,                  null: false
+    t.string   "screen_name",         limit: 255,                null: false
+    t.string   "target_user",         limit: 255, default: ""
+    t.string   "oauth_token",         limit: 255,                null: false
+    t.string   "oauth_token_secret",  limit: 255,                null: false
+    t.integer  "friends_count",       limit: 4,   default: 0
+    t.integer  "followers_count",     limit: 4,   default: 0
+    t.string   "description",         limit: 255, default: ""
+    t.boolean  "auto_update",         limit: 1,   default: true
+    t.boolean  "auto_follow",         limit: 1,   default: true
+    t.boolean  "auto_unfollow",       limit: 1,   default: true
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
+    t.boolean  "auto_direct_message", limit: 1,   default: true
   end
 
   add_index "accounts", ["group_id"], name: "index_accounts_on_group_id", using: :btree
   add_index "accounts", ["screen_name"], name: "index_accounts_on_screen_name", using: :btree
+
+  create_table "direct_messages", force: :cascade do |t|
+    t.integer  "message_pattern_id", limit: 4
+    t.string   "text",               limit: 255
+    t.integer  "step",               limit: 4
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+  end
+
+  add_index "direct_messages", ["message_pattern_id"], name: "index_direct_messages_on_message_pattern_id", using: :btree
 
   create_table "follower_histories", force: :cascade do |t|
     t.integer  "account_id",      limit: 4
@@ -42,10 +53,19 @@ ActiveRecord::Schema.define(version: 20150228025408) do
   add_index "follower_histories", ["account_id"], name: "index_follower_histories_on_account_id", using: :btree
 
   create_table "groups", force: :cascade do |t|
-    t.string   "name",          limit: 255
-    t.integer  "display_order", limit: 4
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.string   "name",               limit: 255
+    t.integer  "display_order",      limit: 4
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+    t.integer  "message_pattern_id", limit: 4
+  end
+
+  add_index "groups", ["message_pattern_id"], name: "index_groups_on_message_pattern_id", using: :btree
+
+  create_table "message_patterns", force: :cascade do |t|
+    t.string   "title",      limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   create_table "power_histories", force: :cascade do |t|
@@ -54,5 +74,21 @@ ActiveRecord::Schema.define(version: 20150228025408) do
     t.datetime "updated_at",              null: false
   end
 
+  create_table "sent_messages", force: :cascade do |t|
+    t.integer  "account_id",        limit: 4
+    t.integer  "direct_message_id", limit: 4
+    t.integer  "to_user_id",        limit: 4
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
+  add_index "sent_messages", ["account_id"], name: "index_sent_messages_on_account_id", using: :btree
+  add_index "sent_messages", ["direct_message_id"], name: "index_sent_messages_on_direct_message_id", using: :btree
+  add_index "sent_messages", ["to_user_id"], name: "index_sent_messages_on_to_user_id", using: :btree
+
+  add_foreign_key "direct_messages", "message_patterns"
   add_foreign_key "follower_histories", "accounts"
+  add_foreign_key "groups", "message_patterns"
+  add_foreign_key "sent_messages", "accounts"
+  add_foreign_key "sent_messages", "direct_messages"
 end

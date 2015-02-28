@@ -1,18 +1,20 @@
 # == Schema Information
 #
-# Table name: groups
+# Table name: direct_messages
 #
 #  id                 :integer          not null, primary key
-#  name               :string(255)
-#  display_order      :integer
+#  message_pattern_id :integer
+#  text               :string(255)
+#  step               :integer
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  message_pattern_id :integer
 #
 
 FactoryGirl.define do
-  factory :group do
-    name "MyString"
+  factory :direct_message do
+    message_pattern nil
+text "MyString"
+step 1
   end
 
 end

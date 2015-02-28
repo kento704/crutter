@@ -1,0 +1,27 @@
+ul.nav.nav-tabs
+  - @message_patterns.each_with_index do |pattern, i|
+    - if i == 0
+      li.active
+        a href="#tab#{pattern.id}" data-toggle="tab" = pattern.title
+    - else
+      li
+        a href="#tab#{pattern.id}" data-toggle="tab" = pattern.title
+  / タブの追加ボタン
+  li.unsortable data-group-id=0
+    = link_to '+', new_message_pattern_path
+
+.tab-content
+  - @message_patterns.each_with_index do |pattern, i|
+    = tab_pane(i, {id: "tab#{pattern.id}"}) do
+      = link_to 'パターンの編集', edit_message_pattern_path(pattern)
+      table.table
+        thead
+          tr
+            th Step
+            th Text
+            th
+            th
+        tbody
+          = render pattern.direct_messages
+      .mt10
+        = link_to "DMの追加", new_message_pattern_direct_message_path(pattern)

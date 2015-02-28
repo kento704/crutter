@@ -9,8 +9,12 @@ Rails.application.routes.draw do
 
   resources :accounts, only: [:show, :edit, :update]
   resources :follower_histories, only: [:index]
+  resources :message_patterns, only: [:new, :edit, :create, :update] do
+    resources :direct_messages, only: [:new]
+  end
+  resources :direct_messages, only: [:index, :edit, :create, :update]
 
-  resources :groups do
+  resources :groups, only: [:new, :edit, :create, :update] do
     patch :change_order
   end
 

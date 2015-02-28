@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  permits :target_user, :description, :auto_update, :auto_follow, :auto_unfollow
+  permits :target_user, :description, :auto_update, :auto_follow, :auto_unfollow, :auto_direct_message
 
   def show(id)
     @account = Account.find(id)

@@ -29,3 +29,7 @@ every 15.minutes do
   rake "account:unfollow_all"
   rake "account:update_all_statuses"
 end
+
+every 17.minutes do
+  rake "account:send_direct_messages_all"
+end

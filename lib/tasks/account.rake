@@ -14,4 +14,8 @@ namespace :account do
     Account.unfollow_all
   end
 
+  task send_direct_messages_all: :environment do
+    Account.send_direct_messages_all
+  end
+
 end

@@ -2,16 +2,18 @@
 #
 # Table name: groups
 #
-#  id            :integer          not null, primary key
-#  name          :string(255)
-#  display_order :integer
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id                 :integer          not null, primary key
+#  name               :string(255)
+#  display_order      :integer
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  message_pattern_id :integer
 #
 
 class Group < ActiveRecord::Base
 
   has_many :accounts
+  belongs_to :message_pattern
 
   before_validation :set_display_order, unless: -> model { model.persisted? }
 
