@@ -32,7 +32,7 @@ class Account < ActiveRecord::Base
 
     accounts     = Account.where(auto_update: true).select(:id, :screen_name)
     screen_names = accounts.pluck(:screen_name)
-    users        = Account.first.get_users(screen_names)
+    users        = Account.last.get_users(screen_names)
 
     followers_sum = 0
     accounts.where(screen_name: users.map(&:screen_name)).each do |a|
