@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150228055932) do
+ActiveRecord::Schema.define(version: 20150228074951) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "group_id",            limit: 4,                  null: false
@@ -77,7 +77,7 @@ ActiveRecord::Schema.define(version: 20150228055932) do
   create_table "sent_messages", force: :cascade do |t|
     t.integer  "account_id",        limit: 4
     t.integer  "direct_message_id", limit: 4
-    t.integer  "to_user_id",        limit: 4
+    t.integer  "to_user_id",        limit: 8
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
   end
