@@ -1,6 +1,7 @@
 = simple_form_for(@account) do |f|
 
   .form-inputs
+    = f.input :group_id, collection: Group.all
     = f.input :target_user
     = f.input :description
     = f.input :auto_update
