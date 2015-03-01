@@ -74,7 +74,7 @@ class Account < ActiveRecord::Base
   #
   # @return [nil]
   def self.send_direct_messages_all
-    Account.where(auto_direct_message: true).each do |a|
+    Account.joins(:group).where.not(group:[message_pattern_id: nil]).where(auto_direct_message: true).each do |a|
       a.send_direct_messages
     end
   end
