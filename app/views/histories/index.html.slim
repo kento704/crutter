@@ -1,0 +1,17 @@
+ul.nav.nav-tabs
+  li.active
+    a href="#tab_follower" data-toggle="tab" Follower
+  li
+    a href="#tab_standard" data-toggle="tab" Standard
+  li
+    a href="#tab_error" data-toggle="tab" Error
+
+.tab-content
+  .tab-pane.fade.in.active#tab_follower
+    = line_chart @followers_count_data, library: {html:'<div id="%{id}" style="width: 100%; height: 300px;">Loading...</div>'}
+  .tab-pane.fade#tab_standard
+    - @standard_histories.each do |line|
+      == simple_format line
+  .tab-pane.fade#tab_error
+    - @error_histories.each do |line|
+      == simple_format line
