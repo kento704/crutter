@@ -50,6 +50,8 @@ gem 'active_decorator'
 gem 'omniauth-twitter'
 gem 'twitter'
 gem 'chartkick'
+# BULK INSERT
+gem "activerecord-import"
 
 group :development do
   gem 'html2slim'
