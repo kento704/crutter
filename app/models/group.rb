@@ -15,6 +15,8 @@ class Group < ActiveRecord::Base
   has_many :accounts
   belongs_to :message_pattern
 
+  delegate :title, to: :message_pattern, prefix: true, allow_nil: true
+
   before_validation :set_display_order, unless: -> model { model.persisted? }
 
   scope :before, -> order {

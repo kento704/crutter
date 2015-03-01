@@ -16,7 +16,7 @@ ul.nav.nav-tabs.sortable
   / 現在のタブの内容を表示（アカウントリスト）
   - @groups.each_with_index do |group, i|
     = tab_pane(i, {id: "tab#{group.id}"}) do
-      .pattern= "DMパターン: #{group.message_pattern.title}"
+      .pattern= "DMパターン: #{group.message_pattern_title}"
       = link_to 'グループの編集', edit_group_path(group)
       table.table
         thead
