@@ -35,16 +35,18 @@ class Account < ActiveRecord::Base
     users        = Account.last.get_users(screen_names)
 
     followerHistories = []
-    accounts.where(screen_name: users.map(&:screen_name)).each do |account|
-      user = users.find &-> u { u.screen_name == account.screen_name }
-      account.update(
-        friends_count:   user.friends_count,
-        followers_count: user.followers_count
-        )
-      followerHistories << FollowerHistory.new(
-        account_id: account.id,
-        followers_count: user.followers_count
-        )
+    Account.transaction do
+      accounts.where(screen_name: users.map(&:screen_name)).each do |account|
+        user = users.find &-> u { u.screen_name == account.screen_name }
+        account.update(
+          friends_count:   user.friends_count,
+          followers_count: user.followers_count
+          )
+        followerHistories << FollowerHistory.new(
+          account_id: account.id,
+          followers_count: user.followers_count
+          )
+      end
     end
     FollowerHistory.import followerHistories
 
