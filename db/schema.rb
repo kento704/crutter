@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150302001605) do
+ActiveRecord::Schema.define(version: 20150302014442) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "group_id",            limit: 4,                  null: false
@@ -45,11 +45,13 @@ ActiveRecord::Schema.define(version: 20150302001605) do
   add_index "direct_messages", ["message_pattern_id"], name: "index_direct_messages_on_message_pattern_id", using: :btree
 
   create_table "followed_users", force: :cascade do |t|
-    t.integer  "target_id",  limit: 4
-    t.integer  "account_id", limit: 4
-    t.integer  "user_id",    limit: 8
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.integer  "target_id",   limit: 4
+    t.integer  "account_id",  limit: 4
+    t.integer  "user_id",     limit: 8
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+    t.string   "name",        limit: 255
+    t.string   "screen_name", limit: 255
   end
 
   add_index "followed_users", ["account_id"], name: "index_followed_users_on_account_id", using: :btree

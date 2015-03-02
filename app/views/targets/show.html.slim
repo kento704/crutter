@@ -5,6 +5,14 @@ p
   strong Screen name:
   = @target.screen_name
 
+- @target.followed_users.each do |user|
+  .followed_user
+    = user.created_at.strftime("%m/%d %H:%M")
+    span style="margin-left:10px;" 
+    -if user.name
+      = link_to user.name, "https://twitter.com/#{user.screen_name}", target:'_blank'
+    -else
+      = user.user_id
 = link_to 'Edit', edit_target_path(@target)
 '|
 = link_to 'Back', targets_path

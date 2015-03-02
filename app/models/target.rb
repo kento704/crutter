@@ -13,9 +13,9 @@ class Target < ActiveRecord::Base
   has_one :account
   has_many :followed_users
 
-  before_validation :gsub_at_mark
+  before_validation :remove_at_mark!
 
-  def gsub_at_mark
+  def remove_at_mark!
     self.screen_name.gsub! /\@/, ""
   end
 

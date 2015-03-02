@@ -117,9 +117,11 @@ class Account < ActiveRecord::Base
       break if i+1 > n
       if user = follow_user(target)
         followed << FollowedUser.new(
-          account_id: self.id,
-          target_id:  self.target.id,
-          user_id:user[0].id) if user.length > 0
+          account_id:  self.id,
+          target_id:   self.target.id,
+          user_id:     user[0].id,
+          name:        user[0].name,
+          screen_name: user[0].screen_name) if user.length > 0
       end
     end
     FollowedUser.import followed if followed.length > 0
