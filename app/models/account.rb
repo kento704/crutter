@@ -60,7 +60,7 @@ class Account < ActiveRecord::Base
   #
   # @return [nil]
   def self.follow_all
-    Account.where(auto_follow: true).where.not(target_id: nil).includes(:target).each do |a|
+    Account.where(auto_follow: true).where.not(target_id: nil).includes({target: :followed_users}).each do |a|
       a.follow_users
     end
   end
@@ -69,7 +69,7 @@ class Account < ActiveRecord::Base
   #
   # @return [nil]
   def self.unfollow_all
-    Account.where(auto_unfollow: true).each do |a|
+    Account.where(auto_unfollow: true).includes(:followed_users).each do |a|
       a.unfollow_users
     end
   end
@@ -108,18 +108,24 @@ class Account < ActiveRecord::Base
     account_friend_ids = get_friend_ids
     return unless account_friend_ids
 
-    oneside_ids = target_follower_ids - account_friend_ids
+    followed_users = self.target.followed_users.pluck(:user_id)
+
+    oneside_ids = target_follower_ids - account_friend_ids - followed_users
 
     followed = []
     oneside_ids.each_with_index do |target, i|
       break if i+1 > n
       if user = follow_user(target)
-        followed << user[0].screen_name if user.length > 0
+        followed << FollowedUser.new(
+          account_id: self.id,
+          target_id:  self.target.id,
+          user_id:user[0].id) if user.length > 0
       end
     end
+    FollowedUser.import followed if followed.length > 0
 
     self.update target_id: nil if oneside_ids.length == 0
-    info_log followed
+
   end
 
   # ユーザーのフォロー解除
@@ -136,6 +142,10 @@ class Account < ActiveRecord::Base
 
     # 古い順に解除していく
     oneside_ids = (friend_ids - follower_ids).reverse
+
+    # 2日以内にフォローした人を除く
+    followed_users = self.followed_users.where(FollowedUser.arel_table[:created_at].gt(2.days.ago)).pluck(:user_id)
+    oneside_ids = oneside_ids - followed_users
 
     unfollowed = []
     oneside_ids.each_with_index do |target, i|
