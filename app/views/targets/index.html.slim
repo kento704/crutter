@@ -1,0 +1,21 @@
+table.table
+  thead
+    tr
+      th Name
+      th Screen name
+      th
+      th
+      th
+
+  tbody
+    - @targets.each do |target|
+      tr
+        td = target.name
+        td = target.screen_name
+        td = link_to 'Show', target
+        td = link_to 'Edit', edit_target_path(target)
+        td = link_to 'Destroy', target, data: {:confirm => 'Are you sure?'}, :method => :delete
+
+br
+
+= link_to 'ターゲットの追加', new_target_path

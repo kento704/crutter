@@ -1,0 +1,10 @@
+p
+  strong Name:
+  = @target.name
+p
+  strong Screen name:
+  = @target.screen_name
+
+= link_to 'Edit', edit_target_path(@target)
+'|
+= link_to 'Back', targets_path

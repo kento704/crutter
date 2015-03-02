@@ -5,7 +5,6 @@
 #  id                  :integer          not null, primary key
 #  group_id            :integer          not null
 #  screen_name         :string(255)      not null
-#  target_user         :string(255)      default("")
 #  oauth_token         :string(255)      not null
 #  oauth_token_secret  :string(255)      not null
 #  friends_count       :integer          default("0")
@@ -17,6 +16,7 @@
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  auto_direct_message :boolean          default("1")
+#  target_id           :integer
 #
 
 class Account < ActiveRecord::Base
@@ -24,6 +24,10 @@ class Account < ActiveRecord::Base
   belongs_to :group
   has_many :follower_histories
   has_many :sent_messages
+  belongs_to :target
+  has_many :followed_users
+
+  delegate :name, :screen_name, to: :target, prefix: true, allow_nil: true
 
   # 全てのアカウントのデータを更新する
   #
@@ -56,7 +60,7 @@ class Account < ActiveRecord::Base
   #
   # @return [nil]
   def self.follow_all
-    Account.where(auto_follow: true).where.not(target_user: "").each do |a|
+    Account.where(auto_follow: true).where.not(target_id: nil).includes(:target).each do |a|
       a.follow_users
     end
   end
@@ -98,7 +102,7 @@ class Account < ActiveRecord::Base
   # @return [nil]
   def follow_users(n=15)
 
-    target_follower_ids = get_follower_ids(self.target_user)
+    target_follower_ids = get_follower_ids(self.target.screen_name)
     return unless target_follower_ids
 
     account_friend_ids = get_friend_ids
@@ -114,7 +118,7 @@ class Account < ActiveRecord::Base
       end
     end
 
-    self.update target_user: "" if oneside_ids.length == 0
+    self.update target_id: nil if oneside_ids.length == 0
     info_log followed
   end
 

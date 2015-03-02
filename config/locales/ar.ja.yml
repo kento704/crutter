@@ -1,0 +1,6 @@
+ja:
+  activerecord:
+    attributes:
+      target:
+        name: 名前
+        screen_name: アカウント名

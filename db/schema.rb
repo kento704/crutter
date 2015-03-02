@@ -11,12 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150228074951) do
+ActiveRecord::Schema.define(version: 20150302001605) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "group_id",            limit: 4,                  null: false
     t.string   "screen_name",         limit: 255,                null: false
-    t.string   "target_user",         limit: 255, default: ""
     t.string   "oauth_token",         limit: 255,                null: false
     t.string   "oauth_token_secret",  limit: 255,                null: false
     t.integer  "friends_count",       limit: 4,   default: 0
@@ -28,10 +27,12 @@ ActiveRecord::Schema.define(version: 20150228074951) do
     t.datetime "created_at",                                     null: false
     t.datetime "updated_at",                                     null: false
     t.boolean  "auto_direct_message", limit: 1,   default: true
+    t.integer  "target_id",           limit: 4
   end
 
   add_index "accounts", ["group_id"], name: "index_accounts_on_group_id", using: :btree
   add_index "accounts", ["screen_name"], name: "index_accounts_on_screen_name", using: :btree
+  add_index "accounts", ["target_id"], name: "index_accounts_on_target_id", using: :btree
 
   create_table "direct_messages", force: :cascade do |t|
     t.integer  "message_pattern_id", limit: 4
@@ -42,6 +43,17 @@ ActiveRecord::Schema.define(version: 20150228074951) do
   end
 
   add_index "direct_messages", ["message_pattern_id"], name: "index_direct_messages_on_message_pattern_id", using: :btree
+
+  create_table "followed_users", force: :cascade do |t|
+    t.integer  "target_id",  limit: 4
+    t.integer  "account_id", limit: 4
+    t.integer  "user_id",    limit: 8
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "followed_users", ["account_id"], name: "index_followed_users_on_account_id", using: :btree
+  add_index "followed_users", ["target_id"], name: "index_followed_users_on_target_id", using: :btree
 
   create_table "follower_histories", force: :cascade do |t|
     t.integer  "account_id",      limit: 4
@@ -86,7 +98,17 @@ ActiveRecord::Schema.define(version: 20150228074951) do
   add_index "sent_messages", ["direct_message_id"], name: "index_sent_messages_on_direct_message_id", using: :btree
   add_index "sent_messages", ["to_user_id"], name: "index_sent_messages_on_to_user_id", using: :btree
 
+  create_table "targets", force: :cascade do |t|
+    t.string   "name",        limit: 255
+    t.string   "screen_name", limit: 255
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  add_foreign_key "accounts", "targets"
   add_foreign_key "direct_messages", "message_patterns"
+  add_foreign_key "followed_users", "accounts"
+  add_foreign_key "followed_users", "targets"
   add_foreign_key "follower_histories", "accounts"
   add_foreign_key "groups", "message_patterns"
   add_foreign_key "sent_messages", "accounts"

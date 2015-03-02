@@ -5,7 +5,6 @@
 #  id                  :integer          not null, primary key
 #  group_id            :integer          not null
 #  screen_name         :string(255)      not null
-#  target_user         :string(255)      default("")
 #  oauth_token         :string(255)      not null
 #  oauth_token_secret  :string(255)      not null
 #  friends_count       :integer          default("0")
@@ -17,6 +16,7 @@
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  auto_direct_message :boolean          default("1")
+#  target_id           :integer
 #
 
 FactoryGirl.define do

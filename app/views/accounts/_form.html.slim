@@ -2,7 +2,7 @@
 
   .form-inputs
     = f.input :group_id, collection: Group.all
-    = f.input :target_user
+    = f.input :target_id, collection: Target.all
     = f.input :description
     = f.input :auto_update
     = f.input :auto_follow

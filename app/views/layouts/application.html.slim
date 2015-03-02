@@ -15,8 +15,10 @@ html
         .nav.navbar-nav
           = nav_list(controller.controller_name, "welcome") do
             = link_to 'TopPage', root_path
+          = nav_list(controller.controller_name, "targets") do
+            = link_to 'Targets', targets_path
           = nav_list(controller.controller_name, "histories") do
-            = link_to 'History', histories_path
+            = link_to 'Histories', histories_path
           = nav_list(controller.controller_name, "direct_messages") do
             = link_to 'DirectMessages', direct_messages_path
     .main-container
