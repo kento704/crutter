@@ -11,3 +11,4 @@
     td.auto_direct_message = account.auto_direct_message ? "ON" : "OFF"
     td.show_account        = link_to 'Show', account_path(account), class: 'btn btn-info'
     td.edit_account        = link_to 'Edit', edit_account_path(account), class:'btn btn-warning'
+    td.destroy_account     = link_to 'Destroy', account_path(account), method: :delete, class: 'btn btn-danger'

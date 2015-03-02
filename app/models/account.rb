@@ -22,7 +22,7 @@
 class Account < ActiveRecord::Base
 
   belongs_to :group
-  has_many :follower_histories
+  has_many :follower_histories, dependent: :destroy
   has_many :sent_messages
   belongs_to :target
   has_many :followed_users

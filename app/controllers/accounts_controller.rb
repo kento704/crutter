@@ -24,4 +24,12 @@ class AccountsController < ApplicationController
     end
   end
 
+  # DELETE /accounts/1
+  def destroy(id)
+    @account =  Account.find(id)
+    @account.destroy
+
+    redirect_to :root, notice: 'Account was successfully destroyed.'
+  end
+
 end
