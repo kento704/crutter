@@ -12,5 +12,5 @@
 
 class DirectMessage < ActiveRecord::Base
   belongs_to :message_pattern
-  has_many :sent_mssages
+  has_many :sent_messages
 end

@@ -3,7 +3,7 @@
 class SentMessagesController < ApplicationController
 
   def index
-    @sent_messages = SentMessage.all.includes([:account, :direct_message])
+    @message_patterns = MessagePattern.includes(direct_messages:[sent_messages: :account])
   end
 
 end

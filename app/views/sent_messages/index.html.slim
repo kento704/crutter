@@ -1,15 +1,26 @@
-table.table
-  thead
-    tr
-      th Screen Name
-      th ToUserId
-      th Text
-      th CreatedAt
+ul.nav.nav-tabs
+  - @message_patterns.each_with_index do |pattern, i|
+    - if i == 0
+      li.active
+        a href="#tab#{pattern.id}" data-toggle="tab" = pattern.title
+    - else
+      li
+        a href="#tab#{pattern.id}" data-toggle="tab" = pattern.title
 
-  tbody
-    - @sent_messages.each do |message|
-      tr
-        td = message.account.screen_name
-        td = message.to_user_id
-        td = message.direct_message.text
-        td = message.created_at.strftime("%m/%d %H:%M")
+.tab-content
+  - @message_patterns.each_with_index do |pattern, i|
+    = tab_pane(i, {id: "tab#{pattern.id}"}) do ||
+      - pattern.direct_messages.each do |dm|
+        p = "STEP:#{dm.step} #{dm.text}"
+        table.table
+          thead
+            tr
+              th Screen Name
+              th ToUserId
+              th CreatedAt
+          tbody
+            - dm.sent_messages.limit(20).each do |message|
+              tr
+                td = message.account.screen_name
+                td = message.to_user_id
+                td = message.created_at.strftime("%m/%d %H:%M")
