@@ -19,7 +19,7 @@ ul.nav.nav-tabs
               th ToUserId
               th CreatedAt
           tbody
-            - dm.sent_messages.limit(20).each do |message|
+            - dm.sent_messages.order(created_at: :desc).limit(20).each do |message|
               tr
                 td = message.account.screen_name
                 td = message.to_user_id
