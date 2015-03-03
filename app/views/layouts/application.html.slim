@@ -21,5 +21,7 @@ html
             = link_to 'Histories', histories_path
           = nav_list(controller.controller_name, "direct_messages") do
             = link_to 'DirectMessages', direct_messages_path
+          = nav_list(controller.controller_name, "sent_messages") do
+            = link_to 'SentMessages', sent_messages_path
     .main-container
       = yield

@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     resources :direct_messages, only: [:new]
   end
   resources :direct_messages, only: [:index, :edit, :create, :update]
+  resources :sent_messages, only: [:index]
 
   resources :groups, only: [:new, :edit, :create, :update] do
     patch :change_order

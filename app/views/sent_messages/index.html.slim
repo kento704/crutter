@@ -1,0 +1,15 @@
+table.table
+  thead
+    tr
+      th Screen Name
+      th ToUserId
+      th Text
+      th CreatedAt
+
+  tbody
+    - @sent_messages.each do |message|
+      tr
+        td = message.account.screen_name
+        td = message.to_user_id
+        td = message.direct_message.text
+        td = message.created_at.strftime("%m/%d %H:%M")
