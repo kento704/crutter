@@ -100,7 +100,7 @@ class Account < ActiveRecord::Base
   #
   # @param [Fixnum] n フォローを試みる回数
   # @return [nil]
-  def follow_users(n=15)
+  def follow_users(n=12)
 
     target_follower_ids = get_follower_ids(self.target.screen_name)
     return unless target_follower_ids
@@ -134,7 +134,7 @@ class Account < ActiveRecord::Base
   #
   # @param [Fixnum] n フォロー解除する数
   # @return [nil]
-  def unfollow_users(n=15)
+  def unfollow_users(n=14)
 
     friend_ids = get_friend_ids
     return unless friend_ids
@@ -157,14 +157,14 @@ class Account < ActiveRecord::Base
       end
     end
 
-    info_log unfollowed
+    info_log unfollowed if unfollowed.length > 0
   end
 
   # DMの送信
   #
   # @param [Fixnum] n 一度にDMを送信する数
   # @return [nil]
-  def send_direct_messages(n=5)
+  def send_direct_messages(n=3)
 
     follower_ids = get_follower_ids
     return unless follower_ids
