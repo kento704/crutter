@@ -164,7 +164,7 @@ class Account < ActiveRecord::Base
   #
   # @param [Fixnum] n 一度にDMを送信する数
   # @return [nil]
-  def send_direct_messages(n=3)
+  def send_direct_messages(n=2)
 
     follower_ids = get_follower_ids
     return unless follower_ids

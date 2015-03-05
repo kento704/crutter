@@ -27,9 +27,12 @@ set :environment, :production
 every 15.minutes do
   rake "account:follow_all"
   rake "account:unfollow_all"
-  rake "account:update_all_statuses"
 end
 
-every 17.minutes do
+every 13.minutes do
   rake "account:send_direct_messages_all"
+end
+
+every 1.hours do
+  rake "account:update_all_statuses"
 end
