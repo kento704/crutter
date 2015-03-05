@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150302014442) do
+ActiveRecord::Schema.define(version: 20150305113355) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "group_id",            limit: 4,                  null: false
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 20150302014442) do
     t.datetime "updated_at",                                     null: false
     t.boolean  "auto_direct_message", limit: 1,   default: true
     t.integer  "target_id",           limit: 4
+    t.boolean  "auto_retweet",        limit: 1,   default: true
   end
 
   add_index "accounts", ["group_id"], name: "index_accounts_on_group_id", using: :btree

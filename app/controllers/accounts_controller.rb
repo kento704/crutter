@@ -1,5 +1,5 @@
 class AccountsController < ApplicationController
-  permits :group_id, :target_id, :description, :auto_update, :auto_follow, :auto_unfollow, :auto_direct_message
+  permits :group_id, :target_id, :description, :auto_update, :auto_follow, :auto_unfollow, :auto_direct_message, :auto_retweet
 
   def show(id)
     @account = Account.find(id)

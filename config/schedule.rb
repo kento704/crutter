@@ -33,6 +33,10 @@ every 13.minutes do
   rake "account:send_direct_messages_all"
 end
 
+every 47.minutes do
+  rake "account:retweet_all"
+end
+
 every 1.hours do
   rake "account:update_all_statuses"
 end

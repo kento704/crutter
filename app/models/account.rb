@@ -83,17 +83,13 @@ class Account < ActiveRecord::Base
     end
   end
 
-  # 複数のユーザーの取得
+  # 全てのアカウントについてリツイート作業を行う
   #
-  # @param [Array<String>] targets ターゲットアカウントのscreen_name
-  # @return [Array<Twitter::User>] users Twitterユーザーリスト情報.
-  def get_users(targets)
-    begin
-      users = client.users(targets)
-    rescue => e
-      error_log(e)
+  # @return [nil]
+  def self.retweet_all
+    Account.where(auto_retweet: true).each do |a|
+      a.retweet_home_timeline
     end
-    users
   end
 
   # ユーザーのフォロー
@@ -203,6 +199,31 @@ class Account < ActiveRecord::Base
     end
   end
 
+  # ホームタイムラインからリツイート数の多いツイートをリツイート
+  #
+  # @return [nil]
+  def retweet_home_timeline
+    if home_timeline = get_home_timeline
+      home_timeline.each do |tweet|
+        if tweet.retweet_count > 2 && valid_tweet?(tweet.text)
+          info_log tweet.text if retweet(tweet)
+        end
+      end
+    end
+  end
+
+  # テキストがNGワードを含まないかどうかチェックする
+  # 
+  # @param [String] text チェックするテキスト
+  # @return [Boolean] result 含まないかどうか(true: 含まない)
+  def valid_tweet?(text)
+    if text.match(/(セフレ|エロ|サクラ|無料|神|万円|アフィリエイト|ゲーム|iOS|And|メアド|番号|アプリ|LINE|変態|ヤリマン|ビッチ|女)/i)
+      return false
+    else
+      return true
+    end
+  end
+
   # private
 
   #################
@@ -237,6 +258,19 @@ class Account < ActiveRecord::Base
     user
   end
 
+  # 複数のユーザーの取得
+  #
+  # @param [Array<String>] targets ターゲットアカウントのscreen_name
+  # @return [Array<Twitter::User>] users Twitterユーザーリスト情報.
+  def get_users(targets)
+    begin
+      users = client.users(targets)
+    rescue => e
+      error_log(e)
+    end
+    users
+  end
+
   # ユーザーのフォロー
   #
   # @param [Fixnum] target ターゲットアカウントのUserID
@@ -263,19 +297,6 @@ class Account < ActiveRecord::Base
       return nil
     end
     user
-  end
-
-  # ユーザーのタイムラインの取得
-  #
-  # @param [String] target ターゲットアカウントのscreen_name
-  # @return [Array<Twitter::Tweet>] user_timeline ユーザーのタイムライン
-  def get_user_timeline(target=screen_name)
-    begin
-      user_timeline = client.user_timeline(target)
-    rescue => e
-      error_log(e)
-    end
-    user_timeline
   end
 
   # フレンド(フォロー)ID一覧の取得
@@ -329,6 +350,32 @@ class Account < ActiveRecord::Base
       error_log(e)
     end
     message
+  end
+
+  # ユーザーのホームタイムラインの取得
+  #
+  # @param [String] target ターゲットアカウントのscreen_name
+  # @return [Array<Twitter::Tweet>] user_timeline ユーザーのタイムライン
+  def get_home_timeline(target=screen_name)
+    begin
+      home_timeline = client.home_timeline(target)
+    rescue => e
+      error_log(e)
+    end
+    home_timeline
+  end
+
+  # リツイート
+  #
+  # @param [Twitter::Tweet] tweet リツイートするツイート
+  # @return [Twitter::DirectMessage] message 送ったDM
+  def retweet(tweet)
+    begin
+      retweeted = client.retweet(tweet.status_id)
+    rescue => e
+      error_log(e)
+    end
+    retweeted
   end
 
   #################

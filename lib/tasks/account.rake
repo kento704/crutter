@@ -18,4 +18,9 @@ namespace :account do
     Account.send_direct_messages_all
   end
 
+  task retweet_all: :environment do
+    # 朝8時以降、20%の確率でリツイート
+    Account.retweet_all if DateTime.now.hour >= 8 && rand(100) < 20
+  end
+
 end
