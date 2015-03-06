@@ -190,9 +190,9 @@ class Account < ActiveRecord::Base
           message = direct_messages.where(DirectMessage.arel_table[:step].gt(sent_message.direct_message.step)).first
           if message && send_direct_message(sent_message.to_user_id, message.text)
             sent_message.update(direct_message_id: message.id)
-            sent_num += 1
-            return if sent_num+1 > n
           end
+          sent_num += 1
+          return if sent_num+1 > n
         end
       end
     end
@@ -205,9 +205,9 @@ class Account < ActiveRecord::Base
       message = direct_messages.first
       if send_direct_message(follower_id, message.text)
         self.sent_messages.create(to_user_id: follower_id, direct_message_id: message.id)
-        sent_num += 1
-        return if sent_num+1 > n
       end
+      sent_num += 1
+      return if sent_num+1 > n
     end
   end
 
