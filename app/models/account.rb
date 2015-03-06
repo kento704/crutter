@@ -170,7 +170,9 @@ class Account < ActiveRecord::Base
   # @return [nil]
   def send_direct_messages(n=2)
 
-    follower_ids = get_follower_ids
+    follower_ids = Rails.cache.fetch("follower-#{self.id}", expires_in: 3.hours) do
+      get_follower_ids
+    end
     return unless follower_ids
 
     direct_messages = self.group.message_pattern.direct_messages.order(:step)
