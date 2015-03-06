@@ -98,10 +98,14 @@ class Account < ActiveRecord::Base
   # @return [nil]
   def follow_users(n=12)
 
-    target_follower_ids = get_follower_ids(self.target.screen_name)
+    target_follower_ids = Rails.cache.fetch("target-follower-#{self.target.screen_name}", expires_in: 3.hours) do
+      get_follower_ids(self.target.screen_name)
+    end
     return unless target_follower_ids
 
-    account_friend_ids = get_friend_ids
+    account_friend_ids = Rails.cache.fetch("friend-#{self.id}", expires_in: 3.hours) do
+      get_friend_ids
+    end
     return unless account_friend_ids
 
     followed_users = self.target.followed_users.pluck(:user_id)
@@ -132,10 +136,14 @@ class Account < ActiveRecord::Base
   # @return [nil]
   def unfollow_users(n=14)
 
-    friend_ids = get_friend_ids
+    friend_ids = Rails.cache.fetch("friend-#{self.id}", expires_in: 3.hours) do
+      get_friend_ids
+    end
     return unless friend_ids
 
-    follower_ids = get_follower_ids
+    follower_ids = Rails.cache.fetch("follower-#{self.id}", expires_in: 3.hours) do
+      get_follower_ids
+    end
     return unless follower_ids
 
     # 古い順に解除していく
