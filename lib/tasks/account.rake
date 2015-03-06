@@ -25,7 +25,8 @@ namespace :account do
 
   task send_direct_messages_all: :environment do
     result = Benchmark.realtime do
-      Account.send_direct_messages_all
+      # 朝8時以降のみ
+      Account.send_direct_messages_all if DateTime.now.hour >= 8
     end
     puts "send_direct_messages_all: #{result}s"
   end
