@@ -179,30 +179,32 @@ class Account < ActiveRecord::Base
 
     # 返信
     if recieved_messages = get_direct_messages
+      sender_ids = recieved_messages.map{|mes| mes.sender.id }
+      sent_messages = self.sent_messages.where(to_user_id: sender_ids).includes(:direct_message)
+
       recieved_messages.each do |mes|
         # 返事が来ていれば、次のステップのメッセージを送信する
-        if sent_message = self.sent_messages.find_by(to_user_id: mes.to_h[:sender_id])
-          if sent_message.created_at < mes.to_h[:created_at].to_datetime
-            message = direct_messages.where(DirectMessage.arel_table[:step].gt(sent_message.direct_message.step)).first
-            if message && send_direct_message(sent_message.to_user_id, message.text)
-              sent_message.update(direct_message_id: message.id)
-              sent_num += 1
-              return if sent_num+1 > n
-            end
+        if sent_message = sent_messages.select{|sm| sm.to_user_id == mes.to_h[:sender_id] && sm.created_at < mes.to_h[:created_at].to_datetime }[0]
+          message = direct_messages.where(DirectMessage.arel_table[:step].gt(sent_message.direct_message.step)).first
+          if message && send_direct_message(sent_message.to_user_id, message.text)
+            sent_message.update(direct_message_id: message.id)
+            sent_num += 1
+            return if sent_num+1 > n
           end
         end
       end
     end
 
+    # 送ったことのあるUserID
+    sent_user_ids = self.sent_messages.where(to_user_id: follower_ids).pluck(:to_user_id)
+
     # 新規送信
-    follower_ids.each do |follower_id|
-      unless self.sent_messages.find_by(to_user_id: follower_id)
-        message = direct_messages.first
-        if send_direct_message(follower_id, message.text)
-          sent_messages.create(to_user_id: follower_id, direct_message_id: message.id)
-          sent_num += 1
-          return if sent_num+1 > n
-        end
+    (follower_ids - sent_user_ids).each do |follower_id|
+      message = direct_messages.first
+      if send_direct_message(follower_id, message.text)
+        sent_messages.create(to_user_id: follower_id, direct_message_id: message.id)
+        sent_num += 1
+        return if sent_num+1 > n
       end
     end
   end
