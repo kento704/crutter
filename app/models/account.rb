@@ -189,11 +189,11 @@ class Account < ActiveRecord::Base
         # 返事が来ていれば、次のステップのメッセージを送信する
         if sent_message = messages.select{|sm| sm.to_user_id == mes.to_h[:sender_id] && sm.created_at < mes.to_h[:created_at].to_datetime }[0]
           message = direct_messages.where(DirectMessage.arel_table[:step].gt(sent_message.direct_message.step)).first
-          if message && send_direct_message(sent_message.to_user_id, message.text)
-            sent_message.update(direct_message_id: message.id)
+          if message
+            sent_message.update(direct_message_id: message.id) if send_direct_message(sent_message.to_user_id, message.text)
+            sent_num += 1
+            return if sent_num+1 > n
           end
-          sent_num += 1
-          return if sent_num+1 > n
         end
       end
     end
