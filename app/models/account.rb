@@ -342,7 +342,7 @@ class Account < ActiveRecord::Base
   #
   # @param [Fixnum] n 取得する数
   # @return [Array<Twitter::DirectMessage>] messages DM
-  def get_direct_messages(n=10)
+  def get_direct_messages(n=100)
     begin
       messages = client.direct_messages(count: n)
     rescue => e
