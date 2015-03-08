@@ -61,7 +61,8 @@ class Account < ActiveRecord::Base
   # @return [nil]
   def self.follow_all
     Account.where(auto_follow: true).where.not(target_id: nil).includes({target: :followed_users}).each do |a|
-      a.follow_users
+      # フレンドの数が一定未満のとき、フォローする
+      a.follow_users if a.friends_count < 2000 - 15 || a.friends_count < a.followers_count * 1.1 - 15
     end
   end
 
