@@ -187,7 +187,7 @@ class Account < ActiveRecord::Base
 
       recieved_messages.each do |mes|
         # 返事が来ていれば、次のステップのメッセージを送信する
-        if sent_message = messages.select{|sm| sm.to_user_id == mes.to_h[:sender_id] && sm.created_at < mes.to_h[:created_at].to_datetime }[0]
+        if sent_message = messages.select{|sm| sm.to_user_id == mes.to_h[:sender_id] && sm.updated_at < mes.to_h[:created_at].to_datetime }[0]
           message = direct_messages.where(DirectMessage.arel_table[:step].gt(sent_message.direct_message.step)).first
           if message
             sent_message.update(direct_message_id: message.id) if send_direct_message(sent_message.to_user_id, message.text)
