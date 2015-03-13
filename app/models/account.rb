@@ -367,11 +367,10 @@ class Account < ActiveRecord::Base
 
   # ユーザーのホームタイムラインの取得
   #
-  # @param [String] target ターゲットアカウントのscreen_name
   # @return [Array<Twitter::Tweet>] user_timeline ユーザーのタイムライン
-  def get_home_timeline(target=screen_name)
+  def get_home_timeline
     begin
-      home_timeline = client.home_timeline(target)
+      home_timeline = client.home_timeline
     rescue => e
       error_log(e)
     end
