@@ -383,7 +383,7 @@ class Account < ActiveRecord::Base
   # @return [Twitter::DirectMessage] message 送ったDM
   def retweet(tweet)
     begin
-      retweeted = client.retweet(tweet.status_id)
+      retweeted = client.retweet(tweet.id)
     rescue => e
       error_log(e)
     end
