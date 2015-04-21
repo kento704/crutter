@@ -11,6 +11,11 @@ class OmniauthCallbacksController < ApplicationController
         oauth_token:        auth.credentials.token,
         oauth_token_secret: auth.credentials.secret
       )
+    else
+      account.update(
+        oauth_token:        auth.credentials.token,
+        oauth_token_secret: auth.credentials.secret
+      )
     end
     redirect_to :root
   end
