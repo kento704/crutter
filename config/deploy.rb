@@ -8,7 +8,7 @@ set :rbenv_ruby, '2.2.1'
 # Default value for :linked_files is []
 set :linked_files, %w{config/database.yml config/secrets.yml}
 
-set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system public/assets public/uploads}
+set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system public/assets public/uploads}
 
 set :default_stage, "production"
 
