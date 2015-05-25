@@ -128,8 +128,12 @@ class Account < ActiveRecord::Base
           screen_name: user[0].screen_name) if user.length > 0
       end
     end
-    FollowedUser.import followed if followed.length > 0
-    info_log followed.map{|f| f.name} if followed.length > 0
+    if followed.length > 0
+      FollowedUser.import followed
+      info_log followed.map{|f| f.name}
+    else
+      info_log "[]"
+    end
     self.update target_id: nil if oneside_ids.length == 0
 
   end
