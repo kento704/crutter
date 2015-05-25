@@ -114,7 +114,7 @@ class Account < ActiveRecord::Base
     oneside_ids = target_follower_ids - account_friend_ids - followed_users
 
     followed = []
-    oneside_ids.each_with_index do |target, i|
+    oneside_ids.shuffle.each_with_index do |target, i|
       break if i+1 > n
       if user = follow_user(target)
         followed << FollowedUser.new(
@@ -126,7 +126,7 @@ class Account < ActiveRecord::Base
       end
     end
     FollowedUser.import followed if followed.length > 0
-
+    info_log followed.map{|f| f.name} if followed.length > 0
     self.update target_id: nil if oneside_ids.length == 0
 
   end
