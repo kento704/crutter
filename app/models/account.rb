@@ -157,8 +157,8 @@ class Account < ActiveRecord::Base
     # 古い順に解除していく
     oneside_ids = (friend_ids - follower_ids).reverse
 
-    # 2日以内にフォローした人を除く
-    followed_users = self.followed_users.where(FollowedUser.arel_table[:created_at].gt(2.days.ago)).pluck(:user_id)
+    # 1日以内にフォローした人を除く
+    followed_users = self.followed_users.where(FollowedUser.arel_table[:created_at].gt(1.days.ago)).pluck(:user_id)
     oneside_ids = oneside_ids - followed_users
 
     unfollowed = []
